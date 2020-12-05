@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.CustomerMapper">
+    <!--<select id="findCustomerByNameAndJobs" parameterType="com.po.Customer" resultType="com.po.Customer">
+        select * from mybatis where 1=1
+        <if test="username !=null and username !=''">
+            and username like concat('%',#{username}, '%')
+        </if>
+        <if test="jobs !=null and jobs !=''">
+            and jobs= #{jobs}
+        </if>
+    </select>-->
+    <select id="findCustomerByNameOrJobs" parameterType="com.po.Customer" resultType="com.po.Customer">
+        select * from mybatis where 1=1
+        <choose>
+            <when test="username !=null and username !=''">
+                and username like concat('%',#{username}, '%')
+            </when>
+            <when test="jobs !=null and jobs !=''">
+                and jobs= #{jobs}
+            </when>
+            <otherwise>
+                and phone is not null
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findCustomerByNameAndJobs" parameterType="com.po.Customer" resultType="com.po.Customer">
+        select * from mybatis
+        <where>
+            <if test="username !=null and username !=''">
+                and username like concat('%',#{username}, '%')
+            </if>
+            <if test="jobs !=null and jobs !=''">
+                and jobs= #{jobs}
+            </if>
+        </where>
+    </select>
+    <update id="updateCustomer" parameterType="com.po.Customer">
+        update mybatis
+        <set>
+            <if test="username !=null and username !=''">
+                username=#{username},
+            </if>
+            <if test="jobs !=null and jobs !=''">
+                jobs= #{jobs}
+            </if>
+            <if test="phone !=null and phone !=''">
+                phone= #{phone}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="findCustomerByIds" parameterType="List" resultType="com.po.Customer">
+        select * from mybatis where id in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="findCustomerByName" parameterType="com.po.Customer" resultType="com.po.Customer">
+        <bind name="pattern_username" value="'%'+_parameter.getUsername()+'%'"/>
+        select * from mybatis
+        where
+        username like #{pattern_username}
+    </select>
+</mapper>
